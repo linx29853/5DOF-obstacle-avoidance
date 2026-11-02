@@ -1,0 +1,29 @@
+{
+  "frame": "world",
+  "units": "m",
+  "table": {
+    "name": "table",
+    "type": "box",
+    "center": [0.0, 0.0, -0.029],
+    "half_size": [0.6, 0.6, 0.025]
+  },
+  "base_collision": {
+    "name": "base_collision",
+    "center": [0.0168263, 0.0, 0.0336],
+    "half_size": [0.04781, 0.055463, 0.036001]
+  },
+  "obstacles": [
+    {
+      "name": "practice_sphere",
+      "type": "sphere",
+      "center": [0.15, 0.0, 0.20],
+      "radius": 0.04
+    },
+    {
+      "name": "obstacle_box",
+      "type": "box",
+      "center": [0.27, -0.10, 0.19],
+      "half_size": [0.025, 0.025, 0.08]
+    }
+  ]
+}

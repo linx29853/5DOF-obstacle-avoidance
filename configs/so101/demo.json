@@ -1,0 +1,41 @@
+{
+  "frame": "world",
+  "units": "m",
+  "start_degrees": [-60, 0, 0, 0, 0],
+  "goal_degrees": [60, 0, 0, 0, 0],
+  "margin_mm": 5.0,
+  "planning": {"seed": 42, "step_degrees": 15, "max_iterations": 1000},
+  "trajectory": {
+    "limits_source": "teaching_simulation",
+    "velocity_limits_rad_s": [0.5, 0.4, 0.4, 0.6, 0.8],
+    "acceleration_limits_rad_s2": [1.0, 0.8, 0.8, 1.2, 1.6],
+    "sample_period_s": 0.02
+  },
+  "output_dir": "outputs/so101/demo",
+  "table": {
+    "name": "table", "type": "box",
+    "center": [0.0, 0.0, -0.029], "half_size": [0.6, 0.6, 0.025]
+  },
+  "base_collision": {
+    "name": "base_collision",
+    "center": [0.0168263, 0.0, 0.0336], "half_size": [0.04781, 0.055463, 0.036001]
+  },
+  "cases": {
+    "single": {
+      "obstacles": [
+        {"name": "sphere", "type": "sphere", "center": [0.15, 0.0, 0.20], "radius": 0.04}
+      ]
+    },
+    "multi": {
+      "obstacles": [
+        {"name": "sphere", "type": "sphere", "center": [0.15, 0.0, 0.20], "radius": 0.04},
+        {"name": "box", "type": "box", "center": [0.27, -0.10, 0.19], "half_size": [0.025, 0.025, 0.08]}
+      ]
+    },
+    "blocked": {
+      "obstacles": [
+        {"name": "start_blocker", "type": "sphere", "center": [0.2151, 0.3053, 0.2265], "radius": 0.08}
+      ]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "status": "model_load_verified",
+  "backend": "mujoco",
+  "model_path": "models/so101/official/so101_new_calib.xml",
+  "units": {
+    "length": "m",
+    "angle": "rad",
+    "time": "s"
+  },
+  "arm_joint_names": [
+    "shoulder_pan",
+    "shoulder_lift",
+    "elbow_flex",
+    "wrist_flex",
+    "wrist_roll"
+  ],
+  "gripper_joint_name": "gripper",
+  "gripper_position_rad": 0.0,
+  "joint_limits_rad": [
+    [-1.9198621771937616, 1.9198621771937634],
+    [-1.7453292519943224, 1.7453292519943366],
+    [-1.69, 1.69],
+    [-1.6580628494556928, 1.6580627293335335],
+    [-2.7438472969992493, 2.841206309382605]
+  ],
+  "velocity_limits_rad_s": null,
+  "acceleration_limits_rad_s2": null,
+  "scene_path": "configs/so101/scene_static.json"
+}

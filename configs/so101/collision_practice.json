@@ -1,0 +1,10 @@
+{
+  "frame": "world",
+  "units": "m",
+  "obstacle": {
+    "name": "practice_sphere",
+    "center": [0.15, 0.0, 0.20],
+    "radius": 0.04
+  },
+  "note": "教学静态球障碍；不是实测场景。尚未补齐桌面与底座碰撞体。"
+}

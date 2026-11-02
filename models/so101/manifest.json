@@ -1,0 +1,9 @@
+{
+  "status": "model_load_verified",
+  "source_repository": "https://github.com/TheRobotStudio/SO-ARM100",
+  "source_commit": "a758567c3978dfeefe282ede0500085a48fe8f78",
+  "source_model_path": "Simulation/SO101/so101_new_calib.xml",
+  "local_model_path": "models/so101/official/so101_new_calib.xml",
+  "license_file": "models/so101/official/LICENSE",
+  "modifications": []
+}

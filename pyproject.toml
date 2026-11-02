@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "armlab-planning-control"
+version = "0.0.0"
+description = "SO-101 spatial obstacle avoidance and planar arm planning experiments"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+plot = ["matplotlib>=3.8"]
+sim = ["mujoco>=3.2,<4"]
+media = ["Pillow>=10"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["so101"]
+py-modules = ["RRT_Connect", "computed_torque_tracking", "dynamics", "_validation", "astar", "edge_check", "forward_kinematics", "inverse_jacobian", "inverse_kinematics", "is_pose_valid", "jacobian", "pd_control", "pd_tracking", "simple_check", "trajectory"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
