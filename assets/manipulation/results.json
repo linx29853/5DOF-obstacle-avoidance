@@ -4,33 +4,45 @@
     "title": "Tabletop pick and place",
     "status": "success",
     "simulation": "kinematic_attachment",
-    "frames": 396,
-    "duration_s": 14.150396880042916,
-    "pose_checks": 2033,
+    "frames": 393,
+    "duration_s": 13.656534954095337,
+    "pose_checks": 2082,
     "placement_errors_m": [
-      1.201154787743244e-12
+      1.4366980057624975e-11
     ],
     "all_placed": true,
+    "grasps": [
+      {
+        "item": 0,
+        "closed_angle_rad": 0.11303913705641054,
+        "finger_gaps_m": [
+          -2.323882114518838e-09,
+          -6.4934724264276156e-12
+        ]
+      }
+    ],
+    "planned_detours": [],
     "peak_joint_speed_rad_s": [
-      0.6930693069306905,
-      0.3460775579810125,
-      0.5055787663759305,
-      0.5530397223461403,
-      0.03397178480771653
+      0.6930693069306987,
+      0.36724464789831146,
+      0.4865642890233859,
+      0.6289145147121618,
+      0.6930693069235729
     ],
     "peak_joint_acceleration_rad_s2": [
-      1.3724144691697004,
-      0.7601118899382517,
-      1.1763552592883069,
-      1.2698973036639614,
-      0.06791981969068188
+      1.3724144691696882,
+      0.8752555528829847,
+      1.1763552592883322,
+      1.406541117738119,
+      1.3724144690984161
     ],
-    "max_deviation_from_straight_line_m": 0.005100061939910795,
+    "max_deviation_from_straight_line_m": 0.0015959732952750974,
     "source_sha256": {
-      "manipulation.py": "858ea3bd146d4e8083f3892f4df5dc341591f04ca61de5d4dad0ce7c8337fcfc",
-      "manipulation_media.py": "cccfc7878c1ffdb39671111cbb417ad6d2035753786b4af2ee97c65a5ff7425f"
+      "manipulation.py": "c96bfaccc5212c8073bb93b4e5f06301948bcdf11751c435a8f797357040020d",
+      "manipulation_media.py": "4c00f74f6ab225f853babdb5d443f5e1bcabebaaecf806d630aa4c8b549a98b9",
+      "grasp.py": "c4d58021244c3610fe889f59a86bc9991acf29608c53331c09b2d0f2d79877bb"
     },
-    "config_sha256": "f79bdf84afb1a20264a677dbee36dd0043116dfa7dec99ecfc125cd8818cc858",
+    "config_sha256": "2250506f4ccf0278e2e65025015b13fb519faabe1e1830e6df0e63bac64be339",
     "mujoco_version": "3.17.0",
     "numpy_version": "2.4.6"
   },
@@ -39,33 +51,45 @@
     "title": "Transfer over a workstation divider",
     "status": "success",
     "simulation": "kinematic_attachment",
-    "frames": 431,
-    "duration_s": 15.476370412294639,
-    "pose_checks": 2135,
+    "frames": 427,
+    "duration_s": 14.865696589753282,
+    "pose_checks": 2184,
     "placement_errors_m": [
-      3.2239449567723673e-10
+      1.4372031398548212e-11
     ],
     "all_placed": true,
+    "grasps": [
+      {
+        "item": 0,
+        "closed_angle_rad": 0.11303913705644823,
+        "finger_gaps_m": [
+          -2.323879394472428e-09,
+          -6.4934724264276156e-12
+        ]
+      }
+    ],
+    "planned_detours": [],
     "peak_joint_speed_rad_s": [
-      0.6930693069306898,
-      0.244047468913451,
-      0.5023820572718858,
-      0.5562812354210215,
-      0.042034753114406596
+      0.6930693069306961,
+      0.26336072765778007,
+      0.48656428902333937,
+      0.6289145147071217,
+      0.693069306929152
     ],
     "peak_joint_acceleration_rad_s2": [
-      0.6269987840470147,
-      0.751011462898554,
-      1.1763552592883022,
-      1.282315324567341,
-      0.10312852348038301
+      0.6290114937766684,
+      0.8121592573358304,
+      1.1763552592883588,
+      1.4065411177249556,
+      0.6290114937225142
     ],
-    "max_deviation_from_straight_line_m": 0.005027407192462371,
+    "max_deviation_from_straight_line_m": 0.001595973295236379,
     "source_sha256": {
-      "manipulation.py": "858ea3bd146d4e8083f3892f4df5dc341591f04ca61de5d4dad0ce7c8337fcfc",
-      "manipulation_media.py": "cccfc7878c1ffdb39671111cbb417ad6d2035753786b4af2ee97c65a5ff7425f"
+      "manipulation.py": "c96bfaccc5212c8073bb93b4e5f06301948bcdf11751c435a8f797357040020d",
+      "manipulation_media.py": "4c00f74f6ab225f853babdb5d443f5e1bcabebaaecf806d630aa4c8b549a98b9",
+      "grasp.py": "c4d58021244c3610fe889f59a86bc9991acf29608c53331c09b2d0f2d79877bb"
     },
-    "config_sha256": "f79bdf84afb1a20264a677dbee36dd0043116dfa7dec99ecfc125cd8818cc858",
+    "config_sha256": "2250506f4ccf0278e2e65025015b13fb519faabe1e1830e6df0e63bac64be339",
     "mujoco_version": "3.17.0",
     "numpy_version": "2.4.6"
   },
@@ -74,34 +98,174 @@
     "title": "Two-part sorting",
     "status": "success",
     "simulation": "kinematic_attachment",
-    "frames": 909,
-    "duration_s": 64.19072174142921,
-    "pose_checks": 5361,
+    "frames": 838,
+    "duration_s": 29.26481807356056,
+    "pose_checks": 4487,
     "placement_errors_m": [
-      8.764541948496665e-11,
-      1.3578301295875457e-10
+      2.4098696835284685e-11,
+      2.4105564313199835e-11
     ],
     "all_placed": true,
+    "grasps": [
+      {
+        "item": 0,
+        "closed_angle_rad": 0.11303913701766383,
+        "finger_gaps_m": [
+          -2.326682957409787e-09,
+          -6.4934724264276156e-12
+        ]
+      },
+      {
+        "item": 1,
+        "closed_angle_rad": 0.11303913720799465,
+        "finger_gaps_m": [
+          -2.312933372605741e-09,
+          -6.4934724264276156e-12
+        ]
+      }
+    ],
+    "planned_detours": [],
     "peak_joint_speed_rad_s": [
-      0.6930693069306769,
-      0.40792397199015323,
-      0.5047274829072684,
-      0.5753859404054522,
-      0.4252264780880487
+      0.6930693069306865,
+      0.44204541835066835,
+      0.49412294031036325,
+      0.6569139696794931,
+      0.6930693069702653
     ],
     "peak_joint_acceleration_rad_s2": [
-      1.3724144691696754,
-      0.9645332357507672,
-      1.1763552592884183,
-      1.3146211600179207,
-      1.3788364304649339
+      1.3724144691696885,
+      0.9904240172808056,
+      1.1763552592883797,
+      1.4194349165862625,
+      1.3724144690624074
     ],
-    "max_deviation_from_straight_line_m": 0.08848584347884286,
+    "max_deviation_from_straight_line_m": 0.002520265804347657,
     "source_sha256": {
-      "manipulation.py": "858ea3bd146d4e8083f3892f4df5dc341591f04ca61de5d4dad0ce7c8337fcfc",
-      "manipulation_media.py": "cccfc7878c1ffdb39671111cbb417ad6d2035753786b4af2ee97c65a5ff7425f"
+      "manipulation.py": "c96bfaccc5212c8073bb93b4e5f06301948bcdf11751c435a8f797357040020d",
+      "manipulation_media.py": "4c00f74f6ab225f853babdb5d443f5e1bcabebaaecf806d630aa4c8b549a98b9",
+      "grasp.py": "c4d58021244c3610fe889f59a86bc9991acf29608c53331c09b2d0f2d79877bb"
     },
-    "config_sha256": "f79bdf84afb1a20264a677dbee36dd0043116dfa7dec99ecfc125cd8818cc858",
+    "config_sha256": "2250506f4ccf0278e2e65025015b13fb519faabe1e1830e6df0e63bac64be339",
+    "mujoco_version": "3.17.0",
+    "numpy_version": "2.4.6"
+  },
+  {
+    "case": "detour",
+    "title": "Detour around a tall divider",
+    "status": "success",
+    "simulation": "kinematic_attachment",
+    "frames": 434,
+    "duration_s": 15.60542673942095,
+    "pose_checks": 4688,
+    "placement_errors_m": [
+      1.4372031398548212e-11
+    ],
+    "all_placed": true,
+    "grasps": [
+      {
+        "item": 0,
+        "closed_angle_rad": 0.11303913705644823,
+        "finger_gaps_m": [
+          -2.323879394472428e-09,
+          -6.4934724264276156e-12
+        ]
+      }
+    ],
+    "planned_detours": [
+      {
+        "stage": "item1/transfer",
+        "direct_blocked": true,
+        "rrt_nodes": 29,
+        "simplified_nodes": 3
+      },
+      {
+        "stage": "return_home",
+        "direct_blocked": true,
+        "rrt_nodes": 21,
+        "simplified_nodes": 3
+      }
+    ],
+    "peak_joint_speed_rad_s": [
+      0.6930693069306954,
+      0.21329684388754222,
+      0.48656428902333937,
+      0.6289145147071217,
+      0.6711922280269985
+    ],
+    "peak_joint_acceleration_rad_s2": [
+      0.956819086443592,
+      0.6475300501392457,
+      1.1763552592883588,
+      1.5684736790510814,
+      0.7515638759020353
+    ],
+    "max_deviation_from_straight_line_m": 0.18498569503261336,
+    "source_sha256": {
+      "manipulation.py": "c96bfaccc5212c8073bb93b4e5f06301948bcdf11751c435a8f797357040020d",
+      "manipulation_media.py": "4c00f74f6ab225f853babdb5d443f5e1bcabebaaecf806d630aa4c8b549a98b9",
+      "grasp.py": "c4d58021244c3610fe889f59a86bc9991acf29608c53331c09b2d0f2d79877bb"
+    },
+    "config_sha256": "2250506f4ccf0278e2e65025015b13fb519faabe1e1830e6df0e63bac64be339",
+    "mujoco_version": "3.17.0",
+    "numpy_version": "2.4.6"
+  },
+  {
+    "case": "clutter",
+    "title": "Cluttered workstation transfer",
+    "status": "success",
+    "simulation": "kinematic_attachment",
+    "frames": 434,
+    "duration_s": 19.793161078193684,
+    "pose_checks": 5626,
+    "placement_errors_m": [
+      1.4372031398548212e-11
+    ],
+    "all_placed": true,
+    "grasps": [
+      {
+        "item": 0,
+        "closed_angle_rad": 0.11303913705644823,
+        "finger_gaps_m": [
+          -2.323879394472428e-09,
+          -6.4934724264276156e-12
+        ]
+      }
+    ],
+    "planned_detours": [
+      {
+        "stage": "item1/transfer",
+        "direct_blocked": true,
+        "rrt_nodes": 25,
+        "simplified_nodes": 3
+      },
+      {
+        "stage": "return_home",
+        "direct_blocked": true,
+        "rrt_nodes": 20,
+        "simplified_nodes": 4
+      }
+    ],
+    "peak_joint_speed_rad_s": [
+      0.6930693069306954,
+      0.21329684388754222,
+      0.48656428902333937,
+      0.6289145147071217,
+      0.5536744309773163
+    ],
+    "peak_joint_acceleration_rad_s2": [
+      1.3408956685739402,
+      1.1763552592882893,
+      1.1763552592883588,
+      1.5163162000744783,
+      0.860842006625434
+    ],
+    "max_deviation_from_straight_line_m": 0.18498569503261336,
+    "source_sha256": {
+      "manipulation.py": "c96bfaccc5212c8073bb93b4e5f06301948bcdf11751c435a8f797357040020d",
+      "manipulation_media.py": "4c00f74f6ab225f853babdb5d443f5e1bcabebaaecf806d630aa4c8b549a98b9",
+      "grasp.py": "c4d58021244c3610fe889f59a86bc9991acf29608c53331c09b2d0f2d79877bb"
+    },
+    "config_sha256": "2250506f4ccf0278e2e65025015b13fb519faabe1e1830e6df0e63bac64be339",
     "mujoco_version": "3.17.0",
     "numpy_version": "2.4.6"
   }

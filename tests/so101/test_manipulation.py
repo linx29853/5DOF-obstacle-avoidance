@@ -6,10 +6,13 @@ import mujoco
 import numpy as np
 import pytest
 
+from so101.grasp import check_grasp
 from so101.manipulation import load_task, run_task, set_frame, solve_ik
 
 
-@pytest.mark.parametrize("case", ["tabletop", "barrier", "sorting"])
+@pytest.mark.parametrize(
+    "case", ["tabletop", "barrier", "sorting", "detour", "clutter"]
+)
 def test_manipulation_end_to_end(case, tmp_path):
     root = run_task(case, output_dir=tmp_path / case)
     report = json.loads((root / "result.json").read_text())
@@ -17,6 +20,11 @@ def test_manipulation_end_to_end(case, tmp_path):
         case, root / "request.json"
     )
     assert report["all_placed"]
+    if case in ("detour", "clutter"):
+        assert any(
+            x["stage"].endswith("transfer") and x["direct_blocked"]
+            for x in report["planned_detours"]
+        )
     assert np.max(report["peak_joint_speed_rad_s"]) > 0
     assert np.all(
         np.array(report["peak_joint_speed_rad_s"])
@@ -60,6 +68,23 @@ def test_manipulation_end_to_end(case, tmp_path):
                 atol=0.001,
             )
             assert np.max(tr["object_positions"][:, i, 2]) > item["source"][2] + 0.03
+            for frame in [
+                stages.index(f"item{i + 1}/lift"),
+                stages.index(f"item{i + 1}/transfer"),
+                released - 1,
+            ]:
+                set_frame(
+                    model,
+                    data,
+                    addresses,
+                    gripper,
+                    tr["positions"][frame],
+                    tr["gripper"][frame],
+                    tr["object_positions"][frame],
+                    tr["object_quaternions"][frame],
+                )
+                check_grasp(model, data, model.geom(f"payload_{i}").id)
+
         # 独立回放所有样本，确认机械臂对环境及自碰撞。
         for q, jaw, objects, quats in zip(
             tr["positions"],
@@ -105,3 +130,14 @@ def test_blocked_task_records_failure(tmp_path):
     with pytest.raises(ValueError, match="阻挡"):
         run_task("tabletop", config, tmp_path / "run")
     assert json.loads((tmp_path / "run/result.json").read_text())["status"] == "failed"
+
+
+def test_off_center_grasp_rejected():
+    _, scene, model, data, addresses, gripper = load_task("tabletop")
+    item = scene["items"][0]
+    q = solve_ik(model, data, addresses, item["source"], np.zeros(5))
+    # 原缺陷的物块位于指尖外侧；即使允许绑定，也必须拒绝该抓取。
+    misplaced = data.site("gripperframe").xpos.copy() - [0, 0, 0.014]
+    set_frame(model, data, addresses, gripper, q, 0.12, [misplaced], [[1, 0, 0, 0]])
+    with pytest.raises(ValueError, match="双侧夹持"):
+        check_grasp(model, data, model.geom("payload_0").id)

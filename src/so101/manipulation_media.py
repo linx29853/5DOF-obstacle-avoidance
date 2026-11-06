@@ -52,13 +52,30 @@ def export_task(run_dir, output_path=None, fps=12):
                 track["object_quaternions"][i],
             )
             renderer.update_scene(data, camera=camera)
+            for part in range(track["object_positions"].shape[1]):
+                indices = np.flatnonzero(track["stages"] == f"item{part + 1}/transfer")[
+                    ::3
+                ]
+                for point in track["object_positions"][indices, part]:
+                    geom_id = renderer.scene.ngeom
+                    if geom_id >= renderer.scene.maxgeom:
+                        break
+                    mujoco.mjv_initGeom(
+                        renderer.scene.geoms[geom_id],
+                        mujoco.mjtGeom.mjGEOM_SPHERE,
+                        np.array([0.0015] * 3),
+                        point,
+                        np.eye(3).ravel(),
+                        np.array([1.0, 0.8, 0.15, 1.0], dtype=np.float32),
+                    )
+                    renderer.scene.ngeom += 1
             image = Image.fromarray(renderer.render())
             draw = ImageDraw.Draw(image)
             draw.rectangle((0, 0, 640, 42), fill=(20, 28, 40))
             draw.text((14, 8), f"SO-101 | {report['title']}", fill="white")
             draw.text(
                 (14, 25),
-                "Kinematic grasp attachment | fixed base",
+                "Kinematic grasp | yellow: planned loaded path",
                 fill=(180, 205, 225),
             )
             draw.rectangle((0, 447, 640, 480), fill=(20, 28, 40))
@@ -75,6 +92,29 @@ def export_task(run_dir, output_path=None, fps=12):
             target, save_all=True, append_images=frames[1:], duration=delays, loop=0
         )
         frames[len(frames) // 2].save(target.with_suffix(".png"))
+        lifting = np.flatnonzero(track["stages"] == "item1/lift")
+        i = int(lifting[len(lifting) // 2])
+        set_frame(
+            model,
+            data,
+            addresses,
+            gripper,
+            track["positions"][i],
+            float(track["gripper"][i]),
+            track["object_positions"][i],
+            track["object_quaternions"][i],
+        )
+        camera.lookat[:] = track["object_positions"][i, 0]
+        camera.distance = 0.23
+        camera.azimuth = 90
+        camera.elevation = -12
+        renderer.update_scene(data, camera=camera)
+        closeup = Image.fromarray(renderer.render())
+        draw = ImageDraw.Draw(closeup)
+        draw.rectangle((0, 0, 640, 30), fill=(20, 28, 40))
+        draw.text((14, 10), "Grasp close-up | two-sided contact verified", fill="white")
+        closeup.save(target.with_name(target.stem + "-grasp.png"))
+
     print(f"动画: {target}", flush=True)
     return target
 

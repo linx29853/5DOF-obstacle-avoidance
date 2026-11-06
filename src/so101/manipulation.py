@@ -13,6 +13,7 @@ from scipy.interpolate import PchipInterpolator
 from scipy.optimize import least_squares
 
 from so101.edge_check import is_edge_valid
+from so101.grasp import add_finger_collisions, check_grasp, grasp_distances
 from so101.model import PROJECT_ROOT, load_model
 from so101.path_simplification import simplify_path
 from so101.planning import rrt_connect
@@ -27,6 +28,7 @@ def load_task(case, config_path=DEFAULT_CONFIG):
     scene = request["cases"][case]
     _, config, _ = load_model()
     spec = mujoco.MjSpec.from_file(str(PROJECT_ROOT / config["model_path"]))
+    add_finger_collisions(spec)
     spec.worldbody.add_light(pos=[0.3, -0.3, 1], dir=[0, 0, -1])
     for geometry in request["environment"] + scene["obstacles"]:
         spec.worldbody.add_geom(
@@ -86,7 +88,7 @@ def solve_ik(model, data, addresses, target, seed):
             ]
         ]
     ]
-    site = model.site("gripperframe").id
+    site = model.site("graspframe").id
 
     def residual(q):
         data.qpos[addresses] = q
@@ -95,6 +97,7 @@ def solve_ik(model, data, addresses, target, seed):
         return np.r_[
             data.site_xpos[site] - target,
             0.15 * (axis - [0, 0, -1]),
+            0.15 * (data.site_xmat[site].reshape(3, 3)[:, 2] - [1, 0, 0]),
             0.00001 * (q - seed),
         ]
 
@@ -111,7 +114,7 @@ def solve_ik(model, data, addresses, target, seed):
             gtol=1e-10,
         )
         error = residual(result.x)
-        if np.linalg.norm(error[:3]) < 0.0005 and np.linalg.norm(error[3:6]) < 0.001:
+        if np.linalg.norm(error[:3]) < 0.0005 and np.linalg.norm(error[3:9]) < 0.001:
             return result.x.copy()
     raise ValueError(f"目标超出朝下抓取工作空间: {target.tolist()}")
 
@@ -167,7 +170,7 @@ def _run_task(case, config_path, output_dir):
     objects = np.array([item["source"] for item in scene["items"]], dtype=float)
     rotations = np.tile([1.0, 0, 0, 0], (len(objects), 1))
     opening = request["gripper_open_rad"]
-    site = model.site("gripperframe").id
+    site = model.site("graspframe").id
     times, qs, jaws, xyz, quats, stages, references, actuals = (
         [],
         [],
@@ -191,6 +194,8 @@ def _run_task(case, config_path, output_dir):
     ]
     allowed_grasp = {"gripper", "moving_jaw_so101_v1"}
     checks = 0
+    planned_detours = []
+    grasp_records = []
 
     def pose(qtest, jaw):
         nonlocal checks
@@ -272,12 +277,14 @@ def _run_task(case, config_path, output_dir):
             )
             points.append(previous)
         path = np.vstack([q, points])
+        if not pose(path[-1], opening):
+            raise ValueError(f"{stage}: 目标被障碍阻挡")
         # 长距离转移可调用原有 RRT-Connect 绕障；接近、抬升、放置保持直线。
         edge = lambda a, b: is_edge_valid(
             a, b, lambda x: pose(x, opening), max_joint_step=np.deg2rad(0.5)
         )
         if not all(edge(a, b) for a, b in pairwise(path)):
-            if not stage.endswith("transfer"):
+            if stage.split("/")[-1] not in ("transfer", "return_home", "approach"):
                 raise ValueError(f"{stage}: 直线动作被障碍阻挡")
             found = rrt_connect(
                 q,
@@ -292,6 +299,14 @@ def _run_task(case, config_path, output_dir):
             if found is None:
                 raise ValueError(f"{stage}: 转移规划搜索预算用完")
             path = np.asarray(simplify_path(found, edge))
+            planned_detours.append(
+                {
+                    "stage": stage,
+                    "direct_blocked": True,
+                    "rrt_nodes": len(found),
+                    "simplified_nodes": len(path),
+                }
+            )
         # 全段使用一次五次时间缩放，经过中间路点时保持运动。
         lengths = np.linalg.norm(np.diff(path, axis=0), axis=1)
         coordinate = np.r_[0.0, np.cumsum(lengths)]
@@ -347,12 +362,37 @@ def _run_task(case, config_path, output_dir):
     for i, item in enumerate(scene["items"]):
         prefix = f"item{i + 1}/"
         source, destination = np.array(item["source"]), np.array(item["destination"])
-        grasp = source + [0, 0, request["grasp_offset_m"]]
-        place = destination + [0, 0, request["grasp_offset_m"]]
+        grasp = source
+        place = destination
         height = scene["transport_height_m"]
         move(prefix + "approach", [*grasp[:2], height])
         move(prefix + "descend", grasp)
-        jaw_motion(prefix + "close", request["gripper_closed_rad"])
+        # 以两侧实际距离求闭合角；只有双侧夹持成立才绑定物体。
+        from scipy.optimize import minimize_scalar
+
+        payload = model.geom(f"payload_{i}").id
+
+        def fit_jaw(value, payload=payload):
+            pose(q, value)
+            gap = grasp_distances(model, data, payload)
+            return float(np.sum(gap**2))
+
+        fit = minimize_scalar(
+            fit_jaw,
+            bounds=(-0.15, request["gripper_open_rad"]),
+            method="bounded",
+            options={"xatol": 1e-8},
+        )
+        jaw_motion(prefix + "close", float(fit.x))
+        distances = check_grasp(model, data, payload)
+        grasp_records.append(
+            {
+                "item": i,
+                "closed_angle_rad": opening,
+                "finger_gaps_m": distances.tolist(),
+            }
+        )
+
         R = data.site_xmat[site].reshape(3, 3).copy()
         attached = i
         relative_position = R.T @ (objects[i] - data.site_xpos[site])
@@ -397,6 +437,8 @@ def _run_task(case, config_path, output_dir):
         "pose_checks": checks,
         "placement_errors_m": errors.tolist(),
         "all_placed": bool(np.all(errors < 0.001)),
+        "grasps": grasp_records,
+        "planned_detours": planned_detours,
         "peak_joint_speed_rad_s": np.max(np.abs(speed), axis=0).tolist(),
         "peak_joint_acceleration_rad_s2": np.max(np.abs(accel), axis=0).tolist(),
         "max_deviation_from_straight_line_m": float(
@@ -404,7 +446,11 @@ def _run_task(case, config_path, output_dir):
         ),
         "source_sha256": {
             p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in [Path(__file__), Path(__file__).with_name("manipulation_media.py")]
+            for p in [
+                Path(__file__),
+                Path(__file__).with_name("manipulation_media.py"),
+                Path(__file__).with_name("grasp.py"),
+            ]
         },
         "config_sha256": hashlib.sha256(Path(config_path).read_bytes()).hexdigest(),
         "mujoco_version": mujoco.__version__,

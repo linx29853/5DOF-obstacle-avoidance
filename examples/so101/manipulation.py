@@ -7,7 +7,9 @@ from so101.manipulation import DEFAULT_CONFIG, play_task, run_task
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--case", choices=["tabletop", "barrier", "sorting"], default="tabletop"
+        "--case",
+        choices=["tabletop", "barrier", "sorting", "detour", "clutter"],
+        default="tabletop",
     )
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--check-only", action="store_true")
