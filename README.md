@@ -40,7 +40,7 @@ python examples/so101/manipulation.py --case clutter
 MUJOCO_GL=egl python examples/so101/manipulation.py --case barrier --check-only --export
 ```
 
-高隔挡与多障碍场景会阻断直线转移，调用 RRT-Connect 搜索携物路径和空手返回路径。黄色点线显示携物转移轨迹；绑定物料前校验两侧夹指接触和夹持位置。
+高隔挡与多障碍场景会阻断直线转移，调用 RRT-Connect 搜索携物路径和空手返回路径。黄色点线显示携物转移轨迹。
 
 | 高隔挡绕行 | 多障碍绕行 | 双侧夹持特写 |
 | --- | --- | --- |
