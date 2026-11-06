@@ -9,7 +9,9 @@ import numpy as np
 from so101.model import PROJECT_ROOT, load_model
 
 
-def load_collision_scene(with_obstacle=True, scene_path=None, query_margin=0.0):
+def load_collision_scene(
+    with_obstacle=True, scene_path=None, query_margin=0.0, payload=None
+):
     if not np.isfinite(query_margin) or query_margin < 0:
         raise ValueError("query_margin 必须为非负有限数")
     model, config, joint_ids = load_model()
@@ -36,14 +38,23 @@ def load_collision_scene(with_obstacle=True, scene_path=None, query_margin=0.0):
                 geom_type = mujoco.mjtGeom.mjGEOM_SPHERE
             elif kind == "box":
                 size = np.asarray(geometry["half_size"], dtype=float)
-                if size.shape != (3,) or not np.all(np.isfinite(size)) or np.any(size <= 0):
+                if (
+                    size.shape != (3,)
+                    or not np.all(np.isfinite(size))
+                    or np.any(size <= 0)
+                ):
                     raise ValueError("盒体半尺寸必须为三个正有限数")
                 geom_type = mujoco.mjtGeom.mjGEOM_BOX
             else:
                 raise ValueError(f"不支持的几何类型: {kind}")
             body.add_geom(
-                name=geometry["name"], type=geom_type, pos=center, size=size,
-                contype=1, conaffinity=1, rgba=color,
+                name=geometry["name"],
+                type=geom_type,
+                pos=center,
+                size=size,
+                contype=1,
+                conaffinity=1,
+                rgba=color,
             )
 
         if scene.get("table"):
@@ -51,11 +62,45 @@ def load_collision_scene(with_obstacle=True, scene_path=None, query_margin=0.0):
         if scene.get("base_collision"):
             base_geometry = {**scene["base_collision"], "type": "box"}
             add_geometry(spec.body("base"), base_geometry, [0.2, 0.4, 0.8, 0.25])
-            spec.add_exclude(name="base_shoulder_mount", bodyname1="base", bodyname2="shoulder")
+            spec.add_exclude(
+                name="base_shoulder_mount", bodyname1="base", bodyname2="shoulder"
+            )
         if with_obstacle:
-            obstacles = scene.get("obstacles", [scene["obstacle"]] if "obstacle" in scene else [])
+            obstacles = scene.get(
+                "obstacles", [scene["obstacle"]] if "obstacle" in scene else []
+            )
             for obstacle in obstacles:
                 add_geometry(spec.worldbody, obstacle, [0.9, 0.3, 0.1, 0.65])
+        if payload is not None:
+            radius = float(payload["radius_m"])
+            offset = np.asarray(payload["offset_m"], float)
+            if (
+                not np.isfinite(radius)
+                or radius <= 0
+                or offset.shape != (3,)
+                or not np.all(np.isfinite(offset))
+            ):
+                raise ValueError("载荷半径和工具偏移无效")
+            site = spec.site("gripperframe")
+            rotation = np.empty(9)
+            mujoco.mju_quat2Mat(rotation, site.quat)
+            body = spec.body("gripper").add_body(
+                name="benchmark_payload",
+                pos=np.asarray(site.pos) + rotation.reshape(3, 3) @ offset,
+            )
+            body.add_geom(
+                name="benchmark_payload",
+                type=mujoco.mjtGeom.mjGEOM_SPHERE,
+                size=[radius, 0, 0],
+                contype=1,
+                conaffinity=1,
+                rgba=[0.8, 0.3, 0.1, 1],
+            )
+            spec.add_exclude(
+                name="payload_jaw",
+                bodyname1="benchmark_payload",
+                bodyname2="moving_jaw_so101_v1",
+            )
         model = spec.compile()
         joint_ids = {
             name: mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, name)
@@ -63,7 +108,9 @@ def load_collision_scene(with_obstacle=True, scene_path=None, query_margin=0.0):
         }
     if query_margin > 0:
         enabled = (model.geom_contype != 0) | (model.geom_conaffinity != 0)
-        model.geom_margin[enabled] = np.maximum(model.geom_margin[enabled], query_margin + 1e-6)
+        model.geom_margin[enabled] = np.maximum(
+            model.geom_margin[enabled], query_margin + 1e-6
+        )
         model.geom_gap[enabled] = model.geom_margin[enabled]
     return model, config, joint_ids
 
@@ -87,5 +134,7 @@ def inspect_contacts(model, config, joint_ids, joint_angles):
             body_name = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, body_id)
             geom_name = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, geom_id)
             names.append(geom_name or f"{body_name}/geom_{geom_id}")
-        contacts.append({"geom1": names[0], "geom2": names[1], "dist": float(contact.dist)})
+        contacts.append(
+            {"geom1": names[0], "geom2": names[1], "dist": float(contact.dist)}
+        )
     return data, contacts

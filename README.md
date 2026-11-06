@@ -189,3 +189,17 @@ SO-101 模型来自 [TheRobotStudio/SO-ARM100](https://github.com/TheRobotStudio
 - [任务清单](docs/so101/implementation-checklist.md)
 - [二连杆 RRT-Connect 实验](docs/experiment-06-rrt-connect.md)
 - [路径简化实验](docs/experiment-07-path-simplification.md)
+
+## APF 与 RRT-Connect 对比
+
+五关节 SO-101 在空场、单障碍、密集障碍、狭窄通道和交错挡板五类固定场景中，比较确定性关节空间 APF 与 RRT-Connect。两者共享起终构型、关节限位、5 mm 碰撞裕量及 0.5° 路径复核间隔。
+
+首轮共 20 次运行：APF 在 5 个任务中成功 4 个；RRT-Connect 每任务运行 3 个种子，15 次全部成功。APF 在狭窄通道实例中下降受阻。参数、路径长度、耗时、原始记录及复现方法见[实验报告](docs/so101/apf-comparison/report.md)。
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python examples/so101/compare_apf.py --output outputs/so101/apf-comparison
+```
+
+### 加入单树 RRT
+
+三种方法在相同五个任务中共运行 35 次：APF 成功 4/5，单树 RRT 与 RRT-Connect 各成功 15/15。单树 RRT 使用 5% 目标偏置，RRT-Connect 使用均匀采样；两者每任务运行三个相同种子。首解耗时、原始及简化后路径长度见[三算法对比报告](docs/so101/apf-rrt-comparison/report.md)。
