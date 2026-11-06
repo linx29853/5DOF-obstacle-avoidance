@@ -21,10 +21,8 @@ def test_manipulation_end_to_end(case, tmp_path):
     )
     assert report["all_placed"]
     if case in ("detour", "clutter"):
-        assert any(
-            x["stage"].endswith("transfer") and x["direct_blocked"]
-            for x in report["planned_detours"]
-        )
+        assert report["transfer_routes"]
+        assert not report["transfer_routes"][0]["direct_joint_connection_valid"]
     assert np.max(report["peak_joint_speed_rad_s"]) > 0
     assert np.all(
         np.array(report["peak_joint_speed_rad_s"])
@@ -85,6 +83,21 @@ def test_manipulation_end_to_end(case, tmp_path):
                 )
                 check_grasp(model, data, model.geom(f"payload_{i}").id)
 
+        if case in ("detour", "clutter"):
+            loaded = tr["object_positions"][
+                np.char.startswith(tr["stages"], "item1/transfer"), 0
+            ]
+            assert np.max(loaded[:, 2]) + 0.02 < 0.10  # 携物未越过挡板顶部
+            if case == "clutter":
+                first = loaded[np.abs(loaded[:, 1] + 0.035) < 0.003]
+                second = loaded[np.abs(loaded[:, 1] - 0.04) < 0.003]
+                assert len(first) > 0 and len(second) > 0
+                assert np.min(first[:, 0]) > 0.225 + 0.012
+                assert np.max(second[:, 0]) < 0.20 - 0.012
+            else:
+                crossing = loaded[np.abs(loaded[:, 1]) < 0.003]
+                assert len(crossing) > 0
+                assert np.min(crossing[:, 0]) > 0.23 + 0.012
         # 独立回放所有样本，确认机械臂对环境及自碰撞。
         for q, jaw, objects, quats in zip(
             tr["positions"],

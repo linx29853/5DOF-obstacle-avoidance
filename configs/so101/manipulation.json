@@ -186,25 +186,25 @@
       ]
     },
     "detour": {
-      "title": "Detour around a tall divider",
+      "title": "Single-divider side detour",
       "home": [
         0.2,
         -0.1,
-        0.085
+        0.055
       ],
-      "transport_height_m": 0.085,
+      "transport_height_m": 0.055,
       "obstacles": [
         {
           "name": "tall_divider",
           "center": [
             0.2,
             0,
-            0.065
+            0.05
           ],
           "half_size": [
-            0.04,
+            0.03,
             0.012,
-            0.065
+            0.05
           ],
           "color": [
             0.3,
@@ -238,28 +238,40 @@
             1
           ]
         }
+      ],
+      "transfer_waypoints_m": [
+        [
+          0.275,
+          -0.025,
+          0.055
+        ],
+        [
+          0.275,
+          0.04,
+          0.055
+        ]
       ]
     },
     "clutter": {
-      "title": "Cluttered workstation transfer",
+      "title": "Staggered baffle workstation",
       "home": [
-        0.2,
-        -0.1,
-        0.085
+        0.22,
+        -0.12,
+        0.055
       ],
-      "transport_height_m": 0.085,
+      "transport_height_m": 0.055,
       "obstacles": [
         {
-          "name": "tall_divider",
+          "name": "baffle_left",
           "center": [
-            0.2,
-            0,
-            0.065
+            0.17,
+            -0.035,
+            0.05
           ],
           "half_size": [
-            0.04,
-            0.012,
-            0.065
+            0.055,
+            0.008,
+            0.05
           ],
           "color": [
             0.3,
@@ -269,16 +281,16 @@
           ]
         },
         {
-          "name": "equipment",
+          "name": "baffle_right",
           "center": [
-            0.3,
-            -0.04,
-            0.04
+            0.255,
+            0.04,
+            0.05
           ],
           "half_size": [
-            0.018,
-            0.025,
-            0.04
+            0.055,
+            0.008,
+            0.05
           ],
           "color": [
             0.5,
@@ -286,37 +298,18 @@
             0.65,
             1
           ]
-        },
-        {
-          "name": "fixture",
-          "center": [
-            0.11,
-            0.1,
-            0.025
-          ],
-          "half_size": [
-            0.018,
-            0.025,
-            0.025
-          ],
-          "color": [
-            0.28,
-            0.65,
-            0.55,
-            1
-          ]
         }
       ],
       "items": [
         {
           "source": [
-            0.2,
-            -0.1,
+            0.22,
+            -0.12,
             0.02
           ],
           "destination": [
-            0.2,
-            0.1,
+            0.18,
+            0.12,
             0.02
           ],
           "half_size": [
@@ -331,7 +324,39 @@
             1
           ]
         }
-      ]
+      ],
+      "transfer_waypoints_m": [
+        [
+          0.265,
+          -0.055,
+          0.055
+        ],
+        [
+          0.265,
+          0,
+          0.055
+        ],
+        [
+          0.15,
+          0.015,
+          0.055
+        ],
+        [
+          0.15,
+          0.08,
+          0.055
+        ]
+      ],
+      "camera": {
+        "azimuth": 90,
+        "elevation": -55,
+        "distance": 0.65,
+        "lookat": [
+          0.18,
+          0,
+          0.09
+        ]
+      }
     }
   }
 }

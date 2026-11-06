@@ -195,6 +195,7 @@ def _run_task(case, config_path, output_dir):
     allowed_grasp = {"gripper", "moving_jaw_so101_v1"}
     checks = 0
     planned_detours = []
+    transfer_routes = []
     grasp_records = []
 
     def pose(qtest, jaw):
@@ -284,7 +285,10 @@ def _run_task(case, config_path, output_dir):
             a, b, lambda x: pose(x, opening), max_joint_step=np.deg2rad(0.5)
         )
         if not all(edge(a, b) for a, b in pairwise(path)):
-            if stage.split("/")[-1] not in ("transfer", "return_home", "approach"):
+            if not (
+                stage.split("/")[-1] in ("transfer", "return_home", "approach")
+                or "transfer_via" in stage
+            ):
                 raise ValueError(f"{stage}: 直线动作被障碍阻挡")
             found = rrt_connect(
                 q,
@@ -398,6 +402,25 @@ def _run_task(case, config_path, output_dir):
         relative_position = R.T @ (objects[i] - data.site_xpos[site])
         relative_rotation = R.T.copy()
         move(prefix + "lift", [*grasp[:2], height])
+        via_points = scene.get("transfer_waypoints_m", [])
+        if via_points:
+            destination_q = solve_ik(model, data, addresses, [*place[:2], height], q)
+            direct = is_edge_valid(
+                q,
+                destination_q,
+                lambda x: pose(x, opening),
+                max_joint_step=np.deg2rad(0.5),
+            )
+            transfer_routes.append(
+                {
+                    "item": i,
+                    "direct_joint_connection_valid": bool(direct),
+                    "via_points_m": via_points,
+                }
+            )
+            pose(q, opening)
+        for k, via in enumerate(via_points):
+            move(prefix + f"transfer_via{k + 1}", via)
         move(prefix + "transfer", [*place[:2], height])
         move(prefix + "lower", place)
         # 记录释放时位姿，释放后保持在落点；不将物体瞬移到目标。
@@ -439,6 +462,7 @@ def _run_task(case, config_path, output_dir):
         "all_placed": bool(np.all(errors < 0.001)),
         "grasps": grasp_records,
         "planned_detours": planned_detours,
+        "transfer_routes": transfer_routes,
         "peak_joint_speed_rad_s": np.max(np.abs(speed), axis=0).tolist(),
         "peak_joint_acceleration_rad_s2": np.max(np.abs(accel), axis=0).tolist(),
         "max_deviation_from_straight_line_m": float(
@@ -468,7 +492,7 @@ def play_task(run_dir):
 
     root = Path(run_dir)
     report = json.loads((root / "result.json").read_text())
-    _, _, model, data, addresses, gripper = load_task(
+    _, scene, model, data, addresses, gripper = load_task(
         report["case"], root / "request.json"
     )
     with (
@@ -479,6 +503,11 @@ def play_task(run_dir):
         window.cam.distance = 0.75
         window.cam.azimuth = 135
         window.cam.elevation = -25
+        for key, value in scene.get("camera", {}).items():
+            if key == "lookat":
+                window.cam.lookat[:] = value
+            else:
+                setattr(window.cam, key, value)
         began = time.perf_counter()
         for t, q, jaw, positions, rotations in zip(
             track["times"],

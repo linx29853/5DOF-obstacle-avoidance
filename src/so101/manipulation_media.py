@@ -17,7 +17,7 @@ def export_task(run_dir, output_path=None, fps=12):
     report = json.loads((root / "result.json").read_text())
     if report["status"] != "success":
         raise ValueError("任务必须成功后再导出")
-    _, _, model, data, addresses, gripper = load_task(
+    _, scene, model, data, addresses, gripper = load_task(
         report["case"], root / "request.json"
     )
     target = Path(output_path or root / "demo.gif")
@@ -30,6 +30,11 @@ def export_task(run_dir, output_path=None, fps=12):
     camera.distance = 0.72
     camera.azimuth = 135
     camera.elevation = -30
+    for key, value in scene.get("camera", {}).items():
+        if key == "lookat":
+            camera.lookat[:] = value
+        else:
+            setattr(camera, key, value)
     frames = []
     with (
         np.load(root / "trajectory.npz", allow_pickle=False) as track,
@@ -53,9 +58,9 @@ def export_task(run_dir, output_path=None, fps=12):
             )
             renderer.update_scene(data, camera=camera)
             for part in range(track["object_positions"].shape[1]):
-                indices = np.flatnonzero(track["stages"] == f"item{part + 1}/transfer")[
-                    ::3
-                ]
+                indices = np.flatnonzero(
+                    np.char.startswith(track["stages"], f"item{part + 1}/transfer")
+                )[::3]
                 for point in track["object_positions"][indices, part]:
                     geom_id = renderer.scene.ngeom
                     if geom_id >= renderer.scene.maxgeom:
