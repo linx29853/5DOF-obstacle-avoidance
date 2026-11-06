@@ -12,7 +12,7 @@ dependencies = ["numpy>=1.26"]
 [project.optional-dependencies]
 dev = ["pytest>=8"]
 plot = ["matplotlib>=3.8"]
-sim = ["mujoco>=3.2,<4"]
+sim = ["mujoco>=3.2,<4", "scipy>=1.11"]
 media = ["Pillow>=10"]
 
 [tool.setuptools]

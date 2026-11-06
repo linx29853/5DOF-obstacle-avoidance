@@ -21,6 +21,33 @@
 | 时间轨迹 | 9.081 s，654 个采样点 |
 | 随机种子 | 42 |
 
+## 固定机械臂操作场景
+
+新增五种固定 SO-101 桌面任务：**方块搬运、跨隔挡转移、双物料分拣、高隔挡绕行、多障碍工作台**。每个物料执行接近、下降、闭合、抬升、转移、降低、张开和撤离动作。
+
+| 桌面搬运 | 隔挡转移 | 双物料分拣 |
+| --- | --- | --- |
+| ![桌面搬运](assets/manipulation/tabletop.png) | ![隔挡转移](assets/manipulation/barrier.png) | ![双物料分拣](assets/manipulation/sorting.png) |
+
+```bash
+python -m pip install -e ".[sim,dev,media,plot]"
+python examples/so101/manipulation.py --case tabletop
+python examples/so101/manipulation.py --case barrier
+python examples/so101/manipulation.py --case sorting
+python examples/so101/manipulation.py --case detour
+python examples/so101/manipulation.py --case clutter
+# 无窗口计算、复核并导出动画和轨迹图
+MUJOCO_GL=egl python examples/so101/manipulation.py --case barrier --check-only --export
+```
+
+高隔挡与多障碍场景会阻断直线转移，调用 RRT-Connect 搜索携物路径和空手返回路径。黄色点线显示携物转移轨迹；绑定物料前校验两侧夹指接触和夹持位置。
+
+| 多障碍绕行 | 双侧夹持特写 |
+| --- | --- |
+| ![多障碍工作台](assets/manipulation/clutter.png) | ![夹持特写](assets/manipulation/tabletop-grasp.png) |
+
+操作演示采用运动学轨迹与显式物体绑定，记录关节、夹爪和物料的同步动作，执行全臂及搬运物体的几何复核。配置、算法和结果见 [固定机械臂操作说明](docs/so101/manipulation.md)。
+
 ## 功能
 
 - **五关节正运动学**：按模型的固定安装变换与关节旋转连乘，计算工具坐标系位姿。
