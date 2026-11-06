@@ -21,6 +21,25 @@
 | 时间轨迹 | 9.081 s，654 个采样点 |
 | 随机种子 | 42 |
 
+## 固定机械臂操作场景
+
+新增三种固定 SO-101 桌面任务：**方块搬运、跨隔挡转移、双物料分拣**。每个物料执行接近、下降、闭合、抬升、转移、降低、张开和撤离动作。
+
+| 桌面搬运 | 隔挡转移 | 双物料分拣 |
+| --- | --- | --- |
+| ![桌面搬运](assets/manipulation/tabletop.png) | ![隔挡转移](assets/manipulation/barrier.png) | ![双物料分拣](assets/manipulation/sorting.png) |
+
+```bash
+python -m pip install -e ".[sim,dev,media,plot]"
+python examples/so101/manipulation.py --case tabletop
+python examples/so101/manipulation.py --case barrier
+python examples/so101/manipulation.py --case sorting
+# 无窗口计算、复核并导出动画和轨迹图
+MUJOCO_GL=egl python examples/so101/manipulation.py --case barrier --check-only --export
+```
+
+操作演示采用运动学轨迹与显式物体绑定，记录关节、夹爪和物料的同步动作，执行全臂及搬运物体的几何复核。配置、算法和结果见 [固定机械臂操作说明](docs/so101/manipulation.md)。
+
 ## 功能
 
 - **五关节正运动学**：按模型的固定安装变换与关节旋转连乘，计算工具坐标系位姿。

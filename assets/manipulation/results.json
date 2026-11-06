@@ -1,0 +1,108 @@
+[
+  {
+    "case": "tabletop",
+    "title": "Tabletop pick and place",
+    "status": "success",
+    "simulation": "kinematic_attachment",
+    "frames": 396,
+    "duration_s": 14.150396880042916,
+    "pose_checks": 2033,
+    "placement_errors_m": [
+      1.201154787743244e-12
+    ],
+    "all_placed": true,
+    "peak_joint_speed_rad_s": [
+      0.6930693069306905,
+      0.3460775579810125,
+      0.5055787663759305,
+      0.5530397223461403,
+      0.03397178480771653
+    ],
+    "peak_joint_acceleration_rad_s2": [
+      1.3724144691697004,
+      0.7601118899382517,
+      1.1763552592883069,
+      1.2698973036639614,
+      0.06791981969068188
+    ],
+    "max_deviation_from_straight_line_m": 0.005100061939910795,
+    "source_sha256": {
+      "manipulation.py": "858ea3bd146d4e8083f3892f4df5dc341591f04ca61de5d4dad0ce7c8337fcfc",
+      "manipulation_media.py": "cccfc7878c1ffdb39671111cbb417ad6d2035753786b4af2ee97c65a5ff7425f"
+    },
+    "config_sha256": "f79bdf84afb1a20264a677dbee36dd0043116dfa7dec99ecfc125cd8818cc858",
+    "mujoco_version": "3.17.0",
+    "numpy_version": "2.4.6"
+  },
+  {
+    "case": "barrier",
+    "title": "Transfer over a workstation divider",
+    "status": "success",
+    "simulation": "kinematic_attachment",
+    "frames": 431,
+    "duration_s": 15.476370412294639,
+    "pose_checks": 2135,
+    "placement_errors_m": [
+      3.2239449567723673e-10
+    ],
+    "all_placed": true,
+    "peak_joint_speed_rad_s": [
+      0.6930693069306898,
+      0.244047468913451,
+      0.5023820572718858,
+      0.5562812354210215,
+      0.042034753114406596
+    ],
+    "peak_joint_acceleration_rad_s2": [
+      0.6269987840470147,
+      0.751011462898554,
+      1.1763552592883022,
+      1.282315324567341,
+      0.10312852348038301
+    ],
+    "max_deviation_from_straight_line_m": 0.005027407192462371,
+    "source_sha256": {
+      "manipulation.py": "858ea3bd146d4e8083f3892f4df5dc341591f04ca61de5d4dad0ce7c8337fcfc",
+      "manipulation_media.py": "cccfc7878c1ffdb39671111cbb417ad6d2035753786b4af2ee97c65a5ff7425f"
+    },
+    "config_sha256": "f79bdf84afb1a20264a677dbee36dd0043116dfa7dec99ecfc125cd8818cc858",
+    "mujoco_version": "3.17.0",
+    "numpy_version": "2.4.6"
+  },
+  {
+    "case": "sorting",
+    "title": "Two-part sorting",
+    "status": "success",
+    "simulation": "kinematic_attachment",
+    "frames": 909,
+    "duration_s": 64.19072174142921,
+    "pose_checks": 5361,
+    "placement_errors_m": [
+      8.764541948496665e-11,
+      1.3578301295875457e-10
+    ],
+    "all_placed": true,
+    "peak_joint_speed_rad_s": [
+      0.6930693069306769,
+      0.40792397199015323,
+      0.5047274829072684,
+      0.5753859404054522,
+      0.4252264780880487
+    ],
+    "peak_joint_acceleration_rad_s2": [
+      1.3724144691696754,
+      0.9645332357507672,
+      1.1763552592884183,
+      1.3146211600179207,
+      1.3788364304649339
+    ],
+    "max_deviation_from_straight_line_m": 0.08848584347884286,
+    "source_sha256": {
+      "manipulation.py": "858ea3bd146d4e8083f3892f4df5dc341591f04ca61de5d4dad0ce7c8337fcfc",
+      "manipulation_media.py": "cccfc7878c1ffdb39671111cbb417ad6d2035753786b4af2ee97c65a5ff7425f"
+    },
+    "config_sha256": "f79bdf84afb1a20264a677dbee36dd0043116dfa7dec99ecfc125cd8818cc858",
+    "mujoco_version": "3.17.0",
+    "numpy_version": "2.4.6"
+  }
+]
