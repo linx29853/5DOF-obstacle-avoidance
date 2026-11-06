@@ -42,9 +42,9 @@ MUJOCO_GL=egl python examples/so101/manipulation.py --case barrier --check-only 
 
 高隔挡与多障碍场景会阻断直线转移，调用 RRT-Connect 搜索携物路径和空手返回路径。黄色点线显示携物转移轨迹。
 
-| 高隔挡绕行 | 多障碍绕行 | 双侧夹持特写 |
-| --- | --- | --- |
-| ![高隔挡绕行](assets/manipulation/detour.gif) | ![多障碍工作台](assets/manipulation/clutter.gif) | ![夹持特写](assets/manipulation/tabletop-grasp.png) |
+| 高隔挡绕行 | 多障碍绕行 |
+| --- | --- |
+| ![高隔挡绕行](assets/manipulation/detour.gif) | ![多障碍工作台](assets/manipulation/clutter.gif) |
 
 操作演示采用运动学轨迹与显式物体绑定，记录关节、夹爪和物料的同步动作，执行全臂及搬运物体的几何复核。配置、算法和结果见 [固定机械臂操作说明](docs/so101/manipulation.md)。
 
